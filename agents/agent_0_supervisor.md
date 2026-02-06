@@ -8,7 +8,7 @@ Agent 0 is the supervisor that routes tasks through the agent workflow and ensur
 2. NEVER show user content before all agents pass
 3. ALWAYS run agents in order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 4. ALWAYS wait for user approval of draft options before validation
-5. Text-first approach: Show content in chat, only create files when requested
+5. Use `view` tool to present files to user (creates expandable window in desktop client)
 
 ## WORKFLOW CHECKLIST
 
@@ -45,6 +45,10 @@ For EVERY resume/cover letter request, Agent 0 verifies completion of:
 - Modified 20% max from base resume
 - Keyword-optimized
 - All three lenses applied
+- **CRITICAL FORMATTING:**
+  - Name: "Jeremy Jones" (title case, NOT all caps)
+  - NO header/tagline after name
+  - NO pipes (|) anywhere in document
 
 **Validation:** Draft created following all guidelines.
 
@@ -81,23 +85,63 @@ If ANY agent fails:
 3. Continue through remaining agents
 4. Do NOT show user until all pass
 
-## OUTPUT FORMAT
+## PRESENTATION TO USER
 
-✅ ALL AGENTS PASSED
-- Agent 1: Company Intelligence ✓
-- Agent 2: JD Analysis ✓
-- Agent 3: Draft Created ✓
-- Agent 4: Accuracy 100% ✓
-- Agent 5: Read What You Wrote ✓
-- Agent 6: Voice Score [X]/12 ✓
-- Agent 7: ATS Compliant ✓
+After ALL validation agents pass, present with structured summary:
 
-[Resume content here in chat]
+```
+## ✅ ALL AGENTS PASSED
 
-**Only after user requests:** Create file in /mnt/user-data/outputs/
+**Validation complete:**
+
+- ✅ Accuracy: 100%
+- ✅ Voice Score: [X]/12
+- ✅ ATS: Compliant
+- ✅ Word count: [X] (target: 760 max)
+
+**Formatting corrections applied:**
+
+- ✅ Name: "Jeremy Jones" (title case, not all caps)
+- ✅ NO header/tagline after name
+- ✅ Zero pipes anywhere in document
+
+**Resume ready for review:**
+```
+
+Then use `view` tool to show the file:
+
+```xml
+<view>
+<parameter name="description">Resume for [Company] [Role]</parameter>
+<parameter name="path">/tmp/filename.md</parameter>
+</view>
+```
+
+**All fixed. Ready when you are.**
+
+## FILE PRESENTATION - CRITICAL
+
+**ALWAYS use `view` tool to present files:**
+
+✅ CORRECT:
+```xml
+<view>
+<parameter name="path">/tmp/resume_file.md</parameter>
+<parameter name="description">Resume for review</parameter>
+</view>
+```
+
+❌ WRONG:
+- /tmp/resume_file.md (raw path)
+- [/tmp/resume_file.md](/tmp/resume_file.md) (markdown link)
+- Pasting resume content directly in chat
+- Using present_files tool (copies to outputs, wastes tokens)
+
+**The `view` tool creates an expandable window in the desktop client that the user can interact with.**
 
 ## TOKEN EFFICIENCY
-- Show text in chat first (saves 8,000-10,000 tokens)
-- Create file only when explicitly requested
-- Use bash tools efficiently
+- Use `view` tool to show files (creates expandable window)
+- Create file in /tmp/ first
+- Only copy to /mnt/user-data/outputs/ when user says "save it"
+- Never use present_files tool (wastes tokens copying files)
 - Batch operations when possible
